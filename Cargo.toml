@@ -1,0 +1,17 @@
+[package]
+name = "panoptic_entropy_harvester"
+version = "1.0.0"
+edition = "2021"
+authors = ["Architecte <null@panoptic.local>"]
+description = "Extracteur d'entropie hétérodoxe par gigue d'horloge. Anti-RDRAND."
+license = "MIT"
+publish = false
+
+[dependencies]
+sha3 = { version = "0.9", default-features = false }
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort" # Élimine les traces d panique (stack unwinding)
