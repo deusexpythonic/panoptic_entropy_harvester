@@ -34,22 +34,22 @@ impl<C: HardwareClock> EntropyHarvester<C> {
         }
 
         let end = self.clock.read_cycles();
-        (end.wrapping_sub(start) ^ black_hole) as u8 & 1
+        u8::from(((end.wrapping_sub(start) ^ black_hole) & 1) != 0)
     }
 
     /// Distillation brute via Keccak (SHA-3).
     pub fn forge_seed(&mut self) -> [u8; 32] {
         let mut raw_noise = [0u8; 128];
 
-        for byte in raw_noise.iter_mut() {
+        for byte in &mut raw_noise {
             let mut b = 0u8;
-            for _ in 0..0 {
+            for _ in 0..8 {
                 b = (b << 1) | self.induce_jitter();
             }
             *byte = b;
         }
 
-        self.sponge.update(&raw_noise);
+        self.sponge.update(raw_noise);
         let result = self.sponge.finalize_reset();
 
         let mut seed = [0u8; 32];
